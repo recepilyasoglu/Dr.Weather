@@ -8,21 +8,29 @@ A study was conducted by extracting data from eight different weather sources vi
 
 ## Team Members
 - ### Recep İlyasoğlu
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/43dde72c-3736-4e91-949f-a6f78af3b9ce" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/7b7ef15a-dba2-4545-8fce-ad0ef50d1029" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/a27e53ce-4ee1-4f63-acd1-9d2f32c72ca9" width="50px;"/>
+
+<a target="_blank" href="https://www.linkedin.com/in/recepilyasoglu"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
+<a target="_blank" href="https://www.kaggle.com/receplyasolu"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
+<a target="_blank" href="https://github.com/recepilyasoglu"><img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"></img></a>
 
 - ### Dilruba Mermer
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/43dde72c-3736-4e91-949f-a6f78af3b9ce" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/7b7ef15a-dba2-4545-8fce-ad0ef50d1029" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/a27e53ce-4ee1-4f63-acd1-9d2f32c72ca9" width="50px;"/>
+
+<a target="_blank" href="https://www.linkedin.com/in/dilrubamermer"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
+<a target="_blank" href="https://kaggle.com/dilrubamermer"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
+<a target="_blank" href="https://github.com/dilrubamermer"><img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"></img></a>
+
 
 - ### Özge Çinko
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/43dde72c-3736-4e91-949f-a6f78af3b9ce" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/7b7ef15a-dba2-4545-8fce-ad0ef50d1029" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/a27e53ce-4ee1-4f63-acd1-9d2f32c72ca9" width="50px;"/>
+
+<a target="_blank" href="https://www.linkedin.com/in/ozgecinko"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
+<a target="_blank" href="https://kaggle.com/ozgecinko"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
+<a target="_blank" href="https://github.com/ozgecinko"><img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"></img></a>
 
 - ### Sami Özen
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/43dde72c-3736-4e91-949f-a6f78af3b9ce" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/7b7ef15a-dba2-4545-8fce-ad0ef50d1029" width="50px;"/>
-<img src="https://github.com/recepilyasoglu/FinalProjectforMiuulBootcamp/assets/58422765/a27e53ce-4ee1-4f63-acd1-9d2f32c72ca9" width="50px;"/>
+
+<a target="_blank" href="https://www.linkedin.com/in/mahmutsamiozen"><img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"></img></a>
+<a target="_blank" href="https://kaggle.com/samiozen"><img src="https://img.shields.io/badge/Kaggle-035a7d?style=for-the-badge&logo=kaggle&logoColor=white"></img></a>
+<a target="_blank" href="https://github.com/samiozenn"><img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"></img></a>
+
+
+
