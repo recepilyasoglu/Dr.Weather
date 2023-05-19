@@ -4,3 +4,6 @@ imdb_weather_data.csv
 imdb_data_with_season.csv
 spotify_data_with_season.csv
 spotify_weather_data.csv
+
+# For MacBook
+.DS_Store
