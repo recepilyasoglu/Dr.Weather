@@ -2,6 +2,10 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import numpy as np
+from mlxtend.frequent_patterns import apriori, association_rules
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 pd.set_option("display.width", 500)
 pd.set_option('display.max_columns', None)
@@ -62,22 +66,25 @@ def get_weather(city_name):
             pressure = weather_data["main"]["pressure"]
             wind_speed = weather_data["wind"]["speed"]
 
-            print("Hava Durumu Bilgisi")
-            print(f"Şehir: {city_name}")
-            print(f"Ana Durum: {main_info}")
-            print(f"Hava Durumu Açıklaması: {description}")
-            print(f"Sıcaklık: {temperature} °C")
-            print(f"Nem: {humidity}%")
-            print(f"Rüzgar Hızı: {wind_speed} m/s")
+            # print("Hava Durumu Bilgisi")
+            # print(f"Şehir: {city_name}")
+            # print(f"Ana Durum: {main_info}")
+            # print(f"Hava Durumu Açıklaması: {description}")
+            # print(f"Sıcaklık: {temperature} °C")
+            # print(f"Nem: {humidity}%")
+            # print(f"Rüzgar Hızı: {wind_speed} m/s")
         else:
             print("Hava durumu bilgisi bulunamadı.")
     else:
         print("Şehir bulunamadı.")
 
+    return main_info
 
 city = input("Şehir adını girin: ")
 
-get_weather(city)
+weather = get_weather(city)
+
+weather
 
 # IMDB Dataset Workplace
 df = pd.read_csv("imdb_data.csv", index_col=0)
@@ -303,6 +310,58 @@ df.columns
 # veri setini kaydetme
 df.to_csv("imdb_data_with_season.csv")
 
+# Filtreleme işlemleri
+movie_df = pd.read_csv("imdb_data_with_season.csv", index_col=0)
+movie_df.head()
+
+movie_df = movie_df[movie_df["Rating"] > 7.5]
+
+
+unnecessary_categories = ("Documentary", "Short", "Animation", "Reality-TV",
+                          "Game-Show", "Game", "Music", "Talk-Show")
+
+
+movie_df_ = movie_df[~(movie_df["Genre"].str.startswith(unnecessary_categories))]
+
+movie_df_.shape
+
+movie_df_votes = movie_df_[movie_df_["Votes"] > 750]
+
+movie_df_votes.shape
+
+movie_df_votes.Weather.value_counts()
+
+movie_df_votes.sort_values(by="Rating", ascending=False).head(10)
+
+
+movie_df_votes = movie_df_votes.reset_index()
+
+del movie_df_votes["index"]
+
+movie_df_votes.head(10)
+
+movie_df_votes[movie_df_votes["Title"] == "Red Dead Redemption II"].Description
+
+
+# Filter the Dataset
+filtered_movies = movie_df_votes[(movie_df_votes['Weather'] == weather)]
+
+# Text Representation
+tfidf = TfidfVectorizer()
+tfidf_matrix = tfidf.fit_transform(filtered_movies['Description'])
+
+# Calculate Similarity
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+# Rank and Recommend
+# Assuming we want to recommend top 5 movies
+top_movies_indices = cosine_sim[0].argsort()[-5:][::-1]  # Change the index [0] to the user's preferred movie index
+top_movies = filtered_movies.iloc[top_movies_indices]
+
+# Display Recommendations
+print("Recommended Movies:")
+print(top_movies[['Title', 'Genre', 'Rating', 'Description', 'Director', 'Votes', 'Gross', "Weather", "Season"]])
+
 
 # Spotify Workplace
 spotify_df = pd.read_csv("spotify_weather_data.csv")
@@ -347,7 +406,18 @@ spotify_df.head()
 
 spotify_df.to_csv("spotify_data_with_season.csv")
 
-spotify_df[spotify_df["Popularity"] > 75].Weather.value_counts()
+# Popularity'si 75 den büyük olanları kullanıcıya tavsiye etme kararı aldık
+spotify_new_df = spotify_df[spotify_df["Popularity"] > 75]
+
+spotify_new_df = spotify_new_df.reset_index()
+
+# del spotify_new_df["index"]
+
+spotify_new_df.head()
+
+spotify_df[spotify_df["Popularity"] > 80].Weather.value_counts()
 
 df.groupby(["Weather", "Season"]).agg({"Popularity": "mean"}).sort_values("Rating", ascending=False)
+
+spotify_new_df.to_csv("spotify_data_by_popularity.csv")
 
