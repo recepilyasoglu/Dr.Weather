@@ -52,6 +52,9 @@ def scrape_movies_for_keyword(weather, keyword):
             break
 
         for movie_element in movie_elements:
+            year_element = movie_element.find("span", class_="lister-item-year text-muted unbold")
+            if year_element and ("Video Game" in year_element.text or "TV Series" in year_element.text):
+                continue  # Skip video games and TV series
             title_element = movie_element.find("h3", class_="lister-item-header")
             title = title_element.a.text.strip() if title_element else "N/A"
             titles.append(title)
@@ -100,15 +103,16 @@ def scrape_movies_for_keyword(weather, keyword):
 
 
 keyword_map = {
-    "Rain": ["rain", "rainy-day", "rainy-weather"],
-    "Clear": ["clear-sky", "sun", "sunny", "sunny-day", "sunny-weather"],
-    "Clouds": ["cloud","cloudy-sky", "cloudiness"],
-    "Drizzle": ["rainfall", "raindrop"],
-    "Thunderstorm": ["thunderstorm", "storm", "stormy-weather"],
-    "Snow": ["snow", "snowing"],
-    "Mist": ["mist", "misty-day"],
-    "Fog": ["fog", "foggy-night"]
+    "Rain": ["rain", "rainy-day", "rainy-weather", "melancholy", "coziness"],
+    "Clear": ["clear-sky", "sun", "sunny", "sunny-day", "sunny-weather", "happiness", "optimism"],
+    "Clouds": ["cloud","cloudy-sky", "cloudiness", "serenity", "contemplation"],
+    "Drizzle": ["rainfall", "raindrop", "tranquility", "serenity"],
+    "Thunderstorm": ["thunderstorm", "storm", "stormy-weather", "awe", "excitement"],
+    "Snow": ["snow", "snowing", "winter", "christmas", "wonder", "playfulness", "holiday"],
+    "Mist": ["mist", "misty-day", "intrigue", "calmness", "calm"],
+    "Fog": ["fog", "foggy-night", "uncertainty", "introspection"]
 }
+
 
 
 movie_dfs = []
@@ -119,5 +123,4 @@ for weather, keywords in keyword_map.items():
 all_movies_df = pd.concat(movie_dfs, ignore_index=True)
 
 print(all_movies_df)
-all_movies_df.to_csv('imdb_weather_data.csv')
-
+all_movies_df.to_csv('imdb_weather_data2.csv')
