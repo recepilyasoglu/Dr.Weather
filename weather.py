@@ -2,9 +2,10 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import numpy as np
+import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-
+from datetime import datetime
 
 pd.set_option("display.width", 500)
 pd.set_option('display.max_columns', None)
@@ -86,7 +87,7 @@ weather = get_weather(city)
 weather
 
 # IMDB Dataset Workplace
-df = pd.read_csv("imdb_movies.csv", index_col=0)
+df = pd.read_csv("imdb_movies_last_version.csv", index_col=0)
 df.head()
 
 
@@ -124,6 +125,26 @@ df["Gross"].head()
 df["Director"].head()
 
 df.isnull().sum()
+
+
+# Year için tip düzenlemesi, parantezleri kaldırıp sadece yıl bilgisi aldım
+df.dtypes
+
+def extract_year(year_str):
+    match = re.search(r"\b(\d{4})\b", year_str)
+    if match:
+        year = int(match.group(1))
+        return pd.to_datetime(str(year), format="%Y").date().year
+    else:
+        return None
+
+df["Year"] = df["Year"].apply(lambda x: extract_year(str(x).strip("()")) if pd.notnull(x) else None)
+
+df["Year"].head()
+
+# sadece yıl bilgisi date türü olarak tutulmuyormuş
+
+df.head()
 
 
 # Feature Engineering
@@ -211,6 +232,7 @@ def season_for_weathers(dataframe, weather_col, variable, season_col, wanted_cou
 
 season_for_weathers(df, "Weather", "Rain", "Season", 2, "Spring", "Autumn")
 season_for_weathers(df, "Weather", "Fog", "Season", 2, "Spring", "Autumn")
+season_for_weathers(df, "Weather", "Drizzle", "Season", 2, "Spring", "Autumn")
 season_for_weathers(df, "Weather", "Thunderstorm", "Season", 2, "Spring", "Summer")
 
 df[["Weather", "Season"]].value_counts()
@@ -322,7 +344,7 @@ df.columns
 
 df.shape
 
-movie_df = df[df["Rating"] > 6.5]
+movie_df = df[df["Rating"] > 7.0]
 
 movie_df.shape
 
@@ -343,36 +365,35 @@ movie_df_.head(15)
 movie_df_.dtypes
 
 
-# Votes da filtreleme verimizi çok düşürüyor
 
-# movie_df_votes = movie_df_[movie_df_["Votes"] > 500]
+movie_df_votes = movie_df_[movie_df_["Votes"] > 7300]
 
-# movie_df_votes.shape
-#
-# movie_df_votes.Weather.value_counts()
-#
-# movie_df_votes.sort_values(by="Rating", ascending=False).head(10)
+movie_df_votes.shape
 
+movie_df_votes.Weather.value_counts()
 
-# movie_df_votes = movie_df_votes.reset_index()
-#
-# del movie_df_votes["index"]
-#
-# movie_df_votes.head(10)
-#
-# movie_df_votes[movie_df_votes["Title"] == "Red Dead Redemption II"].Description
+movie_df_votes.sort_values(by="Rating", ascending=False).head(10)
 
 
-movie_df_[movie_df_["Title"] == "Red Dead Redemption II"]
+movie_df_votes = movie_df_votes.reset_index()
 
-movie_df_[movie_df_["Title"] == "Peaky Blinders"]
+del movie_df_votes["index"]
 
+movie_df_votes.head(10)
 
-movie_df_.to_csv("new_imdb_data_only_movies.csv")
+# ufak kontroller
+movie_df_votes[movie_df_votes["Title"] == "Red Dead Redemption II"].Description
+
+movie_df_votes[movie_df_votes["Title"] == "Peaky Blinders"]
+
+movie_df_votes[movie_df_votes["Title"] == "Breaking Bad"]
+
+# son halini kaydettim, tip düzenlemeleri, mevsimleme, kategori filtrelemesi, oylama filtrelemesi
+movie_df_votes.to_csv("last_imdb_data_only_movies.csv")
 
 
 # Filter the Dataset
-filtered_movies = movie_df_[(movie_df_['Weather'] == weather)]
+filtered_movies = movie_df_votes[(movie_df_votes['Weather'] == weather)]
 
 # Text Representation
 tfidf = TfidfVectorizer()
