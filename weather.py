@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import numpy as np
-from mlxtend.frequent_patterns import apriori, association_rules
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -87,7 +86,8 @@ weather = get_weather(city)
 weather
 
 # IMDB Dataset Workplace
-df = pd.read_csv("imdb_data.csv", index_col=0)
+df = pd.read_csv("imdb_movies.csv", index_col=0)
+df.head()
 
 
 # EDA
@@ -104,7 +104,9 @@ get_stats(df)
 # ilgili iş problemimizde Genre ve Rating kullanıcıya içerik tavsiyesinde bulunurken,
 # doğrudan önemli değişkenler olduğu için direkt düşürüldü, Director de 80 küsür dü o da düşürüldü.
 
-df.dropna(subset=["Genre", "Rating", "Director"], inplace=True)
+df.isnull().sum()
+
+df.dropna(subset=["Genre", "Rating"], inplace=True)
 df.shape
 
 # Gross değişkenindeki NAN değerleri doldurma
@@ -118,6 +120,7 @@ df["Gross"].fillna('0', inplace=True)
 df["Gross"].head()
 
 df.isnull().sum()
+
 
 # Feature Engineering
 
@@ -308,14 +311,18 @@ df.shape
 df.columns
 
 # veri setini kaydetme
-df.to_csv("imdb_data_with_season.csv")
+# df.to_csv("imdb_data_with_season.csv")
+
 
 # Filtreleme işlemleri
-movie_df = pd.read_csv("imdb_data_with_season.csv", index_col=0)
-movie_df.head()
 
-movie_df = movie_df[movie_df["Rating"] > 7.5]
+df.shape
 
+movie_df = df[df["Rating"] > 7.0]
+
+movie_df.shape
+
+movie_df[["Weather", "Season"]].value_counts()
 
 unnecessary_categories = ("Documentary", "Short", "Animation", "Reality-TV",
                           "Game-Show", "Game", "Music", "Talk-Show")
@@ -325,26 +332,41 @@ movie_df_ = movie_df[~(movie_df["Genre"].str.startswith(unnecessary_categories))
 
 movie_df_.shape
 
-movie_df_votes = movie_df_[movie_df_["Votes"] > 750]
-
-movie_df_votes.shape
-
-movie_df_votes.Weather.value_counts()
-
-movie_df_votes.sort_values(by="Rating", ascending=False).head(10)
+movie_df_[["Weather", "Season"]].value_counts()
 
 
-movie_df_votes = movie_df_votes.reset_index()
+movie_df_.head(15)
 
-del movie_df_votes["index"]
+movie_df_.dtypes
 
-movie_df_votes.head(10)
 
-movie_df_votes[movie_df_votes["Title"] == "Red Dead Redemption II"].Description
+# Votes da filtreleme verimizi çok düşürüyor
+
+# movie_df_votes = movie_df_[movie_df_["Votes"] > 500]
+
+# movie_df_votes.shape
+#
+# movie_df_votes.Weather.value_counts()
+#
+# movie_df_votes.sort_values(by="Rating", ascending=False).head(10)
+
+
+# movie_df_votes = movie_df_votes.reset_index()
+#
+# del movie_df_votes["index"]
+#
+# movie_df_votes.head(10)
+#
+# movie_df_votes[movie_df_votes["Title"] == "Red Dead Redemption II"].Description
+
+
+movie_df_[movie_df_["Title"] == "Red Dead Redemption II"]
+
+movie_df_.to_csv("new_imdb_data_only_movies.csv")
 
 
 # Filter the Dataset
-filtered_movies = movie_df_votes[(movie_df_votes['Weather'] == weather)]
+filtered_movies = movie_df_[(movie_df_['Weather'] == weather)]
 
 # Text Representation
 tfidf = TfidfVectorizer()
@@ -420,4 +442,28 @@ spotify_df[spotify_df["Popularity"] > 80].Weather.value_counts()
 df.groupby(["Weather", "Season"]).agg({"Popularity": "mean"}).sort_values("Rating", ascending=False)
 
 spotify_new_df.to_csv("spotify_data_by_popularity.csv")
+
+
+spotify_data_ = pd.read_csv("spotify_data_by_popularity.csv", index_col=0)
+spotify_data_.head()
+
+spotify_data_[spotify_data_["Popularity"] > 75].Weather.value_counts()
+
+spotify_data_.sort_values(by="Popularity", ascending=False)
+
+
+
+unnecessary_categories = ("Documentary", "Short", "Animation", "Reality-TV",
+                          "Game-Show", "Game", "Music", "Talk-Show")
+
+unwanted_name = []
+
+for i in spotify_data_["Track Name"]:
+    if "Remix" in i:
+        unwanted_name.append(i)
+
+spotify_data_ = []
+
+movie_df_ = movie_df[~(movie_df["Genre"].str.startswith(unnecessary_categories))]
+
 
