@@ -117,7 +117,11 @@ df["Gross"].head()
 
 df["Gross"].fillna('0', inplace=True)
 
+df["Director"].fillna('NaN', inplace=True)
+
 df["Gross"].head()
+
+df["Director"].head()
 
 df.isnull().sum()
 
@@ -318,7 +322,7 @@ df.columns
 
 df.shape
 
-movie_df = df[df["Rating"] > 7.0]
+movie_df = df[df["Rating"] > 6.5]
 
 movie_df.shape
 
@@ -333,7 +337,6 @@ movie_df_ = movie_df[~(movie_df["Genre"].str.startswith(unnecessary_categories))
 movie_df_.shape
 
 movie_df_[["Weather", "Season"]].value_counts()
-
 
 movie_df_.head(15)
 
@@ -361,6 +364,9 @@ movie_df_.dtypes
 
 
 movie_df_[movie_df_["Title"] == "Red Dead Redemption II"]
+
+movie_df_[movie_df_["Title"] == "Peaky Blinders"]
+
 
 movie_df_.to_csv("new_imdb_data_only_movies.csv")
 
