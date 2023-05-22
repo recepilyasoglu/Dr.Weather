@@ -88,6 +88,7 @@ weather = get_weather(city)
 
 weather
 
+
 # IMDB Dataset Workplace
 df = pd.read_csv("imdb_movies_last_version.csv", index_col=0)
 df.head()
@@ -153,7 +154,7 @@ df.head()
 
 df["Weather"].value_counts()
 
-# gelen Hava Durumu AP içerisindeki json dosyasında yer alan 8 farklı hava durumu bilgisinden yola çıkarak
+# gelen Hava Durumu API içerisindeki json dosyasında yer alan 8 farklı hava durumu bilgisinden yola çıkarak
 # oluşturulan mevsim'lere ait keyword'ler
 
 spring_keywords = ["Rain", "Drizzle", "Clouds", "Fog"]
@@ -380,7 +381,7 @@ del movie_df_votes["index"]
 movie_df_votes.head(10)
 
 # ufak kontroller
-movie_df_votes[movie_df_votes["Title"] == "Red Dead Redemption II"].Description
+movie_df_votes[movie_df_votes["Title"] == "Red Dead Redemption II"]
 
 movie_df_votes[movie_df_votes["Title"] == "Peaky Blinders"]
 
@@ -419,7 +420,9 @@ movie_df_votes.shape
 # son halini kaydettim, tip düzenlemeleri, mevsimleme, kategori filtrelemesi, yönetmen filtrelemesi, oylama filtrelemesi
 movie_df_votes.to_csv("last_imdb_data_only_movies.csv")
 
-movies = pd.read_csv("last_imdb_data_only_movies.csv")
+movies = pd.read_csv("last_imdb_data_only_movies.csv", index_col=0)
+
+movies.head()
 
 
 # Filter the Dataset
@@ -549,13 +552,13 @@ spotify_data_.sort_values(by="Popularity", ascending=False)
 
 # şarkı isimlerinin içerisinde "Remix" ifadesi yer alanları çıkarma işlemi
 def get_songs_without_word(dataframe, track_col, unwanted_variable):
-    unwanted_name = []
+    unwanted_names = []
 
     for i in dataframe[track_col]:
         if unwanted_variable in i:
-            unwanted_name.append(i)
+            unwanted_names.append(i)
 
-    dataframe = dataframe[~dataframe[track_col].str.startswith(tuple(unwanted_name))]
+    dataframe = dataframe[~dataframe[track_col].str.startswith(tuple(unwanted_names))]
 
     return dataframe
 
@@ -623,3 +626,4 @@ def get_songs_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, n
 
 
 get_songs_by_weather(spotify_data_, "Weather", "Track Name", weather, 5)
+
