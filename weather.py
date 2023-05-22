@@ -5,7 +5,8 @@ import numpy as np
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from datetime import datetime
+from imdb import IMDb
+
 
 pd.set_option("display.width", 500)
 pd.set_option('display.max_columns', None)
@@ -80,6 +81,7 @@ def get_weather(city_name):
 
     return main_info
 
+
 city = input("Şehir adını girin: ")
 
 weather = get_weather(city)
@@ -126,9 +128,9 @@ df["Director"].head()
 
 df.isnull().sum()
 
-
 # Year için tip düzenlemesi, parantezleri kaldırıp sadece yıl bilgisi aldım
 df.dtypes
+
 
 def extract_year(year_str):
     match = re.search(r"\b(\d{4})\b", year_str)
@@ -138,6 +140,7 @@ def extract_year(year_str):
     else:
         return None
 
+
 df["Year"] = df["Year"].apply(lambda x: extract_year(str(x).strip("()")) if pd.notnull(x) else None)
 
 df["Year"].head()
@@ -145,7 +148,6 @@ df["Year"].head()
 # sadece yıl bilgisi date türü olarak tutulmuyormuş
 
 df.head()
-
 
 # Feature Engineering
 
@@ -272,7 +274,7 @@ def season_for_every_weather(dataframe, weather_col, variable, season_col, wante
         0]  # dilimleme de hata almamak için [0] tarzda kullandım
     dataframe.loc[variable_indices_shuffled[variable_per_season:2 * variable_per_season], season_col] = seasons_list[1]
     dataframe.loc[variable_indices_shuffled[2 * variable_per_season:3 * variable_per_season], season_col] = \
-    seasons_list[2]
+        seasons_list[2]
     dataframe.loc[variable_indices_shuffled[3 * variable_per_season:], season_col] = seasons_list[3]
 
     return print("####### İlgili Hava Durumu ve Ait Olduğu Mevsim #######" "\n", dataframe[[weather_col, season_col]])
@@ -344,7 +346,7 @@ df.columns
 
 df.shape
 
-movie_df = df[df["Rating"] > 7.0]
+movie_df = df[df["Rating"] > 7.5]
 
 movie_df.shape
 
@@ -352,7 +354,6 @@ movie_df[["Weather", "Season"]].value_counts()
 
 unnecessary_categories = ("Documentary", "Short", "Animation", "Reality-TV",
                           "Game-Show", "Game", "Music", "Talk-Show")
-
 
 movie_df_ = movie_df[~(movie_df["Genre"].str.startswith(unnecessary_categories))]
 
@@ -364,16 +365,13 @@ movie_df_.head(15)
 
 movie_df_.dtypes
 
-
-
-movie_df_votes = movie_df_[movie_df_["Votes"] > 7300]
+movie_df_votes = movie_df_[movie_df_["Votes"] > 5000]
 
 movie_df_votes.shape
 
 movie_df_votes.Weather.value_counts()
 
 movie_df_votes.sort_values(by="Rating", ascending=False).head(10)
-
 
 movie_df_votes = movie_df_votes.reset_index()
 
@@ -388,28 +386,92 @@ movie_df_votes[movie_df_votes["Title"] == "Peaky Blinders"]
 
 movie_df_votes[movie_df_votes["Title"] == "Breaking Bad"]
 
-# son halini kaydettim, tip düzenlemeleri, mevsimleme, kategori filtrelemesi, oylama filtrelemesi
+
+# gözümüzden kaçma ihtimaline karşı, yönetmenler üzerinde de arama yaparak hintli yönetmenleri tespit etme ve bunları veri setinde çıkarma işlemi
+def get_indian_actress():
+    url = 'https://www.imdb.com/search/name/?birth_place=India&job=director'
+
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    results = soup.find_all('h3', class_='lister-item-header')
+
+    hintli_yonetmenler = []
+
+    for result in results:
+        name = result.find('a').text.strip()
+        hintli_yonetmenler.append(name)
+
+    hintli_yonetmenler = [yonetmen for yonetmen in hintli_yonetmenler if yonetmen != "Aamir Khan"]
+
+    return hintli_yonetmenler
+
+
+# Hintli yönetmenlerin isimlerini alma
+indian_actress = get_indian_actress()
+
+movie_df_votes.shape
+
+movie_df_votes = movie_df_votes[~movie_df_votes['Director'].isin(indian_actress)]
+
+movie_df_votes.shape
+
+# son halini kaydettim, tip düzenlemeleri, mevsimleme, kategori filtrelemesi, yönetmen filtrelemesi, oylama filtrelemesi
 movie_df_votes.to_csv("last_imdb_data_only_movies.csv")
+
+movies = pd.read_csv("last_imdb_data_only_movies.csv")
 
 
 # Filter the Dataset
-filtered_movies = movie_df_votes[(movie_df_votes['Weather'] == weather)]
 
-# Text Representation
-tfidf = TfidfVectorizer()
-tfidf_matrix = tfidf.fit_transform(filtered_movies['Description'])
+def get_movies_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, num_of_recommend):
+    """
+            Description:
+                Bu fonksiyonun amacı, kullanıcıdan alınan hava durumu bilgisi ve veri setimizdeki hava durumu bilgisi arasında cosinüs benzerliğine göre
+                girilen veri setinde istenilen sayıda, rastgele olarak, Rating'e göre azalan şekilde film tavsiyesinde bulunmak.
 
-# Calculate Similarity
-cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+            Variables:
+                dataframe: ilgili veri seti
+                weather_col: veri setindeki hava durumu sütunu
+                tf_idf_col: tf_idf yöntemiyle ilgili veri setinde, belirtilen sütundaki kelime sıklığını hesaplar
+                weather_variable: kullanıcıdan alınan hava durumu bilgisi
+                num_of_recommend: tavsiye adedi
 
-# Rank and Recommend
-# Assuming we want to recommend top 5 movies
-top_movies_indices = cosine_sim[0].argsort()[-5:][::-1]  # Change the index [0] to the user's preferred movie index
-top_movies = filtered_movies.iloc[top_movies_indices]
+        """
 
-# Display Recommendations
-print("Recommended Movies:")
-print(top_movies[['Title', 'Genre', 'Rating', 'Description', 'Director', 'Votes', 'Gross', "Weather", "Season"]])
+    filtered_movies = dataframe[(dataframe[weather_col] == weather_variable)]
+
+    num_movies_to_recommend = num_of_recommend
+    num_movies_available = len(filtered_movies)
+
+    # Text Representation
+    tfidf = TfidfVectorizer()
+    tfidf_matrix = tfidf.fit_transform(filtered_movies[tf_idf_col])
+
+    # Calculate Similarity
+    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+    # Generate random indices for movie selection
+    random_indices = np.random.choice(num_movies_available, size=num_movies_to_recommend, replace=False)
+
+    # Get the movie indices sorted by similarity for the selected movie
+    movie_indices = cosine_sim[0].argsort()
+
+    # Select the movies using random indices
+    top_movies_indices = movie_indices[random_indices][::-1]
+
+    # Get the top recommended movies
+    top_movies = filtered_movies.iloc[top_movies_indices]
+    top_movies = top_movies.sort_values("Rating", ascending=False).reset_index()
+    del top_movies["index"]
+
+    # Display Recommendations
+    return print("Recommended Movies:" "\n",
+                 top_movies[
+                     ['Title', 'Year', 'Genre', 'Rating', 'Director', 'Votes', "Weather", "Season"]])
+
+
+get_movies_by_weather(movies, "Weather", "Description", weather, 5)
 
 
 # Spotify Workplace
@@ -420,7 +482,6 @@ spotify_df.shape
 spotify_df.isnull().sum()
 spotify_df.describe().T
 
-
 # EDA
 # 1 tane eksik değer olduğu için (Image) direkt düşürdüm
 spotify_df.dropna(inplace=True)
@@ -428,7 +489,6 @@ spotify_df.dropna(inplace=True)
 spotify_df.isnull().sum()
 
 spotify_df["Weather"].value_counts()
-
 
 # Feature Engineering
 
@@ -470,27 +530,83 @@ df.groupby(["Weather", "Season"]).agg({"Popularity": "mean"}).sort_values("Ratin
 
 spotify_new_df.to_csv("spotify_data_by_popularity.csv")
 
-
 spotify_data_ = pd.read_csv("spotify_data_by_popularity.csv", index_col=0)
 spotify_data_.head()
+
+spotify_data_.shape
 
 spotify_data_[spotify_data_["Popularity"] > 75].Weather.value_counts()
 
 spotify_data_.sort_values(by="Popularity", ascending=False)
 
 
+# Şarkı isimlerinin içerisinde "Remix" ifadesi yer alanları çıkarma işlemi
+def get_songs_without_word(dataframe, track_col, unwanted_variable):
+    unwanted_name = []
 
-unnecessary_categories = ("Documentary", "Short", "Animation", "Reality-TV",
-                          "Game-Show", "Game", "Music", "Talk-Show")
+    for i in dataframe[track_col]:
+        if unwanted_variable in i:
+            unwanted_name.append(i)
 
-unwanted_name = []
+    dataframe = dataframe[~dataframe[track_col].str.startswith(tuple(unwanted_name))]
 
-for i in spotify_data_["Track Name"]:
-    if "Remix" in i:
-        unwanted_name.append(i)
+    return dataframe
 
-spotify_data_ = []
+spotify_data_ = get_songs_without_word(spotify_data_, "Track Name", "Remix")
 
-movie_df_ = movie_df[~(movie_df["Genre"].str.startswith(unnecessary_categories))]
+spotify_data_.shape
 
+spotify_data_.head()
+
+spotify_data_.to_csv("last_spotify_data.csv")
+
+
+def get_songs_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, num_of_recommend):
+    """
+        Description:
+            Bu fonksiyonun amacı, kullanıcıdan alınan hava durumu bilgisi ve veri setimizdeki hava durumu bilgisi arasında cosinüs benzerliğine göre
+            girilen veri setinde istenilen sayıda, rastgele olarak, Popularity'e göre azalan şekilde şarkı tavsiyesinde bulunmak.
+
+        Variables:
+            dataframe: ilgili veri seti
+            weather_col: veri setindeki hava durumu sütunu
+            tf_idf_col: tf_idf yöntemiyle ilgili veri setinde, belirtilen sütundaki kelime sıklığını hesaplar
+            weather_variable: kullanıcıdan alınan hava durumu bilgisi
+            num_of_recommend: tavsiye adedi
+
+    """
+
+    filtered_songs = dataframe[(dataframe[weather_col] == weather_variable)]
+
+    num_songs_to_recommend = num_of_recommend
+    num_songs_available = len(filtered_songs)
+
+    # Text Representation
+    tfidf = TfidfVectorizer()
+    tfidf_matrix = tfidf.fit_transform(filtered_songs[tf_idf_col])
+
+    # Calculate Similarity
+    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+    # Generate random indices for movie selection
+    random_indices = np.random.choice(num_songs_available, size=num_songs_to_recommend, replace=False)
+
+    # Get the movie indices sorted by similarity for the selected movie
+    song_indices = cosine_sim[0].argsort()
+
+    # Select the movies using random indices
+    top_songs_indices = song_indices[random_indices][::-1]
+
+    # Get the top recommended movies
+    top_songs = filtered_songs.iloc[top_songs_indices]
+    top_songs = top_songs.sort_values("Popularity", ascending=False).reset_index()
+    del top_songs["index"]
+
+    # Display Recommendations
+    return print("Recommended Songs:" "\n",
+                 top_songs[
+                     ["Weather", "Track Name", "Artist", "Album", "Popularity", "Season"]])
+
+
+get_songs_by_weather(spotify_data_, "Weather", "Track Name", weather, 5)
 
