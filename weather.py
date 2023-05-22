@@ -438,34 +438,41 @@ def get_movies_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, 
                 num_of_recommend: tavsiye adedi
 
         """
-
+    # kullanıcıdan alınan hava durumu bilgisine göre kendi veri setimizde filtreleme
     filtered_movies = dataframe[(dataframe[weather_col] == weather_variable)]
 
+    # istenilen tavsiye adedi
     num_movies_to_recommend = num_of_recommend
+
+    # rastgele indeksler oluştururken yukarıda filtrelenen filmlerin boyutu kadar oluşturucaz
     num_movies_available = len(filtered_movies)
 
-    # Text Representation
+    # metin
     tfidf = TfidfVectorizer()
     tfidf_matrix = tfidf.fit_transform(filtered_movies[tf_idf_col])
 
-    # Calculate Similarity
+    # benzerliği hesaplama
     cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
-    # Generate random indices for movie selection
+    # film seçimi için rastgele indeksler oluşturma
     random_indices = np.random.choice(num_movies_available, size=num_movies_to_recommend, replace=False)
 
-    # Get the movie indices sorted by similarity for the selected movie
+    # seçilen film için cosinüs benzerliğine göre sıralanmış film indekslerini alma
     movie_indices = cosine_sim[0].argsort()
 
-    # Select the movies using random indices
+    # random indices kullanarak filmleri seçme
     top_movies_indices = movie_indices[random_indices][::-1]
 
-    # Get the top recommended movies
+    # veri setimizden yukarda oluşturulan filmleri alma
     top_movies = filtered_movies.iloc[top_movies_indices]
+
+    # Rating'e göre azalan şekilde sıralama ve indeks'leri resetleme
     top_movies = top_movies.sort_values("Rating", ascending=False).reset_index()
+
+    # index de resetleme işleminden sonra oluşan "index" kolonunu düşürme
     del top_movies["index"]
 
-    # Display Recommendations
+    # filmleri yazdırma
     return print("Recommended Movies:" "\n",
                  top_movies[
                      ['Title', 'Year', 'Genre', 'Rating', 'Director', 'Votes', "Weather", "Season"]])
@@ -540,7 +547,7 @@ spotify_data_[spotify_data_["Popularity"] > 75].Weather.value_counts()
 spotify_data_.sort_values(by="Popularity", ascending=False)
 
 
-# Şarkı isimlerinin içerisinde "Remix" ifadesi yer alanları çıkarma işlemi
+# şarkı isimlerinin içerisinde "Remix" ifadesi yer alanları çıkarma işlemi
 def get_songs_without_word(dataframe, track_col, unwanted_variable):
     unwanted_name = []
 
@@ -575,34 +582,41 @@ def get_songs_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, n
             num_of_recommend: tavsiye adedi
 
     """
-
+    # kullanıcıdan alınan hava durumu bilgisine göre kendi veri setimizde filtreleme
     filtered_songs = dataframe[(dataframe[weather_col] == weather_variable)]
 
+    # istenilen tavsiye adedi
     num_songs_to_recommend = num_of_recommend
+
+    # rastgele indeksler oluştururken yukarıda filtrelenen şarkıların boyutu kadar oluşturucaz
     num_songs_available = len(filtered_songs)
 
-    # Text Representation
+    # metin
     tfidf = TfidfVectorizer()
     tfidf_matrix = tfidf.fit_transform(filtered_songs[tf_idf_col])
 
-    # Calculate Similarity
+    # benzerliği hesaplama
     cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
-    # Generate random indices for movie selection
+    # şarkı seçimi için rastgele indeksler oluşturma
     random_indices = np.random.choice(num_songs_available, size=num_songs_to_recommend, replace=False)
 
-    # Get the movie indices sorted by similarity for the selected movie
+    # seçilen şarkı için cosinüs benzerliğine göre sıralanmış şarkı indekslerini alma
     song_indices = cosine_sim[0].argsort()
 
-    # Select the movies using random indices
+    # random indices kullanarak şarkıları seçme
     top_songs_indices = song_indices[random_indices][::-1]
 
-    # Get the top recommended movies
+    # veri setimizden yukarda oluşturulan şarkıları alma
     top_songs = filtered_songs.iloc[top_songs_indices]
+
+    # Popularity'e göre azalan şekilde sıralama ve indeks'leri resetleme
     top_songs = top_songs.sort_values("Popularity", ascending=False).reset_index()
+
+    # indeks de resetleme işleminden sonra oluşan "index" kolonunu düşürme
     del top_songs["index"]
 
-    # Display Recommendations
+    # şarkıları yazdırma
     return print("Recommended Songs:" "\n",
                  top_songs[
                      ["Weather", "Track Name", "Artist", "Album", "Popularity", "Season"]])
