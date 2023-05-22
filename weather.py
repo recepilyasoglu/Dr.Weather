@@ -623,4 +623,3 @@ def get_songs_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, n
 
 
 get_songs_by_weather(spotify_data_, "Weather", "Track Name", weather, 5)
-
