@@ -388,7 +388,8 @@ movie_df_votes[movie_df_votes["Title"] == "Peaky Blinders"]
 movie_df_votes[movie_df_votes["Title"] == "Breaking Bad"]
 
 
-# gözümüzden kaçma ihtimaline karşı, yönetmenler üzerinde de arama yaparak hintli yönetmenleri tespit etme ve bunları veri setinde çıkarma işlemi
+# gözümüzden kaçma ihtimaline karşı, yönetmenler üzerinde de arama yaparak hintli yönetmenleri tespit etme
+# ve bunları veri setinde çıkarma işlemi
 def get_indian_actress():
     url = 'https://www.imdb.com/search/name/?birth_place=India&job=director'
 
@@ -427,6 +428,7 @@ movies.head()
 
 # Filter the Dataset
 
+# film tavsiye sistemi
 def get_movies_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, num_of_recommend):
     """
             Description:
@@ -571,6 +573,7 @@ spotify_data_.head()
 spotify_data_.to_csv("last_spotify_data.csv")
 
 
+# şarkı tavsiye sistemi
 def get_songs_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, num_of_recommend):
     """
         Description:
@@ -626,4 +629,3 @@ def get_songs_by_weather(dataframe, weather_col, tf_idf_col, weather_variable, n
 
 
 get_songs_by_weather(spotify_data_, "Weather", "Track Name", weather, 5)
-
