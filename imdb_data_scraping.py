@@ -7,7 +7,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.width', 500)
 
-
+# imdb data scraping
 def scrape_movies_for_keyword(weather, keyword):
     """
     Belirli bir anahtar kelimeye göre IMDB'den filmleri toplar ve bir DataFrame olarak döndürür.
