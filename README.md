@@ -1,5 +1,5 @@
 # Movie & Song Recommendations by Weather
-## Final Project for Miuul Bootcamp
+## Dr. Weather
 
 ### Purpose of The Project 
 **Recommend movies and songs according to instant weather information.**
