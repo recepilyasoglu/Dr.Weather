@@ -17,7 +17,7 @@ imdb_data_ = pd.read_csv("last_imdb_data_only_movies.csv")
 
 # weather with api
 def get_weather(city_name):
-    api_key = "414ac3ef8077653d4bbf40735333545d"  # OpenWeatherMap API anahtarınızı buraya ekleyin
+    api_key = " "  # OpenWeatherMap API anahtarınızı buraya ekleyin
 
     lat_url = "http://api.openweathermap.org/geo/1.0/direct?"
     lat_response = requests.get(lat_url, params={"q": city_name, "appid": api_key})
