@@ -1,9 +1,8 @@
 budabuda.csv
-imdb_data.csv
-imdb_weather_data.csv
-imdb_data_with_season.csv
-spotify_data_with_season.csv
-spotify_weather_data.csv
+imdb_movies_last_version.csv
+last_imdb_data_only_movies
+spotify_weather_data
+spotify_data_by_popularity.csv
 
 # For MacBook
 .DS_Store
