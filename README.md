@@ -6,6 +6,14 @@
 
 A study was conducted by extracting data from eight different weather sources via the Open Weather API and by utilizing keywords from the IMDB and Spotify datasets. This study aimed to match the weather information with seasonal patterns found in the IMDB dataset and the Spotify dataset, resulting in movie-song recommendations.
 
+
+![streamlit3](https://github.com/recepilyasoglu/Dr.Weather/assets/77547712/e311058c-fc7f-4764-b465-bf226eb52bd7)
+
+
+![streamlit4](https://github.com/recepilyasoglu/Dr.Weather/assets/77547712/74b35f86-d206-4cfb-83ba-fdfcc21396c2)
+
+
+
 ## Team Members
 - ### Recep İlyasoğlu
 
