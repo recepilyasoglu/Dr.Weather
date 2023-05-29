@@ -1,5 +1,5 @@
-# Movie & Song Recommendations by Weather
-## Dr. Weather
+# Dr. Weather
+## Movie & Song Recommendations by Weather
 
 ### Purpose of The Project 
 **Recommend movies and songs according to instant weather information.**
