@@ -40,7 +40,7 @@ For example, in addition to keywords such as rainy weather for Rain, we also con
 
 ### Spotify 
 
-On Spotify, we followed a different method. Using the Spotify API, we handled the most popular weather-related playlists, especially Spotify's official account, and created playlists for each weather condition and gathered the songs under playlists. We shot the playlists we collected.
+On Spotify, we followed a different method. In the method we followed based on “Social Proof”, we handled the most popular playlists related to weather conditions, especially Spotify's official account, and collected the songs under playlists by creating playlists for each weather condition. We shot the playlists we collected using the Spotify API.
 
 
 ## Recommendations 
@@ -53,6 +53,7 @@ Then, using a hybrid approach, we calculate the frequency of words using the TF-
 ## Streamlit
 
 We decided to present it to users with an interface using Streamlit. In the recommender.py we created, we called functions that predict movies and songs in Streamlit and used them for each weather condition. We wanted to change the background image specific to each weather condition. We published the site we created on Streamlit.
+
 
 ![streamlit3](https://github.com/recepilyasoglu/Dr.Weather/assets/77547712/e311058c-fc7f-4764-b465-bf226eb52bd7)
 
