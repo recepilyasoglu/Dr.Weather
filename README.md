@@ -9,7 +9,6 @@ A study was conducted by extracting data from eight different weather sources vi
 
 # Project Steps
 
-
 ## Open Weather API
 8 different weather information that the user is expected to enter has been determined from the address https://openweathermap.org/api.
 We kept this weather information in the weather variable.
